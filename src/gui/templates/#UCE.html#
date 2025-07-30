@@ -68,6 +68,7 @@
     $.post('/make_move', {'fen': game.fen()}, function(data) {
       console.log(data.fen);
     });
+
     updateStatus()
   }
 
