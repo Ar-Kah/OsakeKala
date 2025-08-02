@@ -1,5 +1,17 @@
-src/gui/chess-env
+src/gui/chess-env/
 
+# compiled files and binaries
+*.o
+*.obj
+*.elf
+*.exe
+*.out
+*.a
+*.so
+*.dll
+
+
+*#
 *~
 #*
 .#*
