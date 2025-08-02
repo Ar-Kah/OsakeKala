@@ -1,6 +1,6 @@
 src/gui/chess-env/
 
-# compiled files and binaries
+# Compiled object files and binaries
 *.o
 *.obj
 *.elf
@@ -10,7 +10,7 @@ src/gui/chess-env/
 *.so
 *.dll
 
-
+# emacs auto-save and backups
 *#
 *~
 #*
