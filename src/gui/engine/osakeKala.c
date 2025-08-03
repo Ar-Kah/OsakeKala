@@ -185,6 +185,21 @@ void parse_fen(char *fen) {
         // increment fen
 	fen++;
     }
+    // goto to enpassant square
+    fen++;
+
+    // parse enpassant square
+    if (*fen != '-'){
+	int file = fen[0] - 'a';
+	int rank = 8 - (fen[1] - '0');
+
+	// set up enpassant square
+	enpassant = rank * 16 + file;
+    }
+    else {
+	enpassant = no_sq;
+    }
+
 };
 
 // print board
@@ -212,16 +227,19 @@ void print_board() {
 	printf("   A B C D E F G H\n");
 	printf("\n");
 
+	printf("---------------\n");
 	printf("Side: %s\n", (side == white) ? "white" : "black");
         printf("Castling: %c%c%c%c\n", (castle & KC) ? 'K' : '-',
 	       (castle & QC) ? 'Q' : '-',
 	       (castle & kc) ? 'k' : '-',
 	       (castle & qc) ? 'q' : '-');
+
+	printf("Enpassant: %s\n\n", square_to_coords[enpassant]);
 }
 
 int main() {
 
-    parse_fen("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w  - 0 1");
+    parse_fen("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq e3 0 1");
     print_board();
 
     return 0;
