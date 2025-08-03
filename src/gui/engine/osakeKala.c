@@ -2,10 +2,12 @@
 #include <ctype.h>
 
 // FEN debug positions
-char start_position[] = "rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2";
+char start_position[] = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 char tricky_position[] = "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1";
 
 enum {e, P, N, B, R, Q, K, p, n, b, r, q, k, o};
+
+enum side { white, black};
 
 // square encoding
 enum square {
@@ -16,7 +18,14 @@ enum square {
     a4 = 64, b4, c4, d4, e4, f4, g4, h4,
     a3 = 80, b3, c3, d3, e3, f3, g3, h3,
     a2 = 96, b2, c2, d2, e2, f2, g2, h2,
-    a1 = 112, b1, c1, d1, e1, f1, g1, h1,
+    a1 = 112, b1, c1, d1, e1, f1, g1, h1, no_sq
+};
+
+// castling rights (15 dec => 1111 => both side can castle to both sides)
+int castle = 15;
+
+enum castling {
+    KC = 1, QC = 2, kc = 4, qc = 8
 };
 
 // ascii pieces
@@ -36,6 +45,14 @@ int board[128] = {
     P, P, P, P, P, P, P, P,  o, o, o, o, o, o, o, o,
     R, N, B, Q, K, B, N, R,  o, o, o, o, o, o, o, o
 };
+
+// side to move
+int side = white;
+
+// castling rights
+
+// en passant square
+int enpassant = no_sq;
 
 // convert board square indexes to coordinates
 char *square_to_coords[] = {
@@ -82,6 +99,10 @@ void reset_board() {
 		board[square] = e;
        	}
     }
+    // reset stats
+    side = -1;
+    castle = 0;
+    enpassant = no_sq;
 };
 
 // parse FEN
@@ -131,7 +152,40 @@ void parse_fen(char *fen) {
 	    }
        	}
     }
-    
+    //increment FEN
+    fen++;
+
+    // parse side to move
+    side = *fen == 'w' ? white : black;
+
+    // go to castling rights parsing
+    fen += 2;
+
+    // parse castling rights
+    while (*fen != ' ')
+    {
+	printf("%c", *fen);
+
+	switch(*fen) {
+        case 'K':
+          castle |= KC;
+          break;
+        case 'Q':
+          castle |= QC;
+          break;
+        case 'k':
+          castle |= kc;
+          break;
+        case 'q':
+          castle |= qc;
+          break;
+        case '-':
+          break;
+        }
+
+        // increment fen
+	fen++;
+    }
 };
 
 // print board
@@ -158,11 +212,14 @@ void print_board() {
 	printf("\n");
 	printf("   A B C D E F G H\n");
 	printf("\n");
+
+	printf("Side: %s\n", (side == white) ? "white" : "black");
+        printf("Castling: %d\n", castle);
 }
 
 int main() {
 
-    parse_fen(tricky_position);
+    parse_fen("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQk - 0 1");
     print_board();
 
     return 0;
