@@ -164,7 +164,6 @@ void parse_fen(char *fen) {
     // parse castling rights
     while (*fen != ' ')
     {
-	printf("%c", *fen);
 
 	switch(*fen) {
         case 'K':
@@ -214,12 +213,15 @@ void print_board() {
 	printf("\n");
 
 	printf("Side: %s\n", (side == white) ? "white" : "black");
-        printf("Castling: %d\n", castle);
+        printf("Castling: %c%c%c%c\n", (castle & KC) ? 'K' : '-',
+	       (castle & QC) ? 'Q' : '-',
+	       (castle & kc) ? 'k' : '-',
+	       (castle & qc) ? 'q' : '-');
 }
 
 int main() {
 
-    parse_fen("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQk- - 0 1");
+    parse_fen("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w  - 0 1");
     print_board();
 
     return 0;
