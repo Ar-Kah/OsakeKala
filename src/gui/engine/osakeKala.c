@@ -1,8 +1,9 @@
 #include <stdio.h>
+#include <ctype.h>
 
 // FEN debug positions
-char *start_position = "rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2";
-char *tricky_position = "";
+char start_position[] = "rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2";
+char tricky_position[] = "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1";
 
 enum {e, P, N, B, R, Q, K, p, n, b, r, q, k, o};
 
@@ -22,8 +23,7 @@ enum square {
 char ascii_pieces[] = ".RNBRQKpnbrqko";
 
 // unicode pieces
-char *unicode_pieces[] = {".", "♙", "♘", "♗", "♖", "♕", "♔",
-    "♟", "♞", "♝", "♜", "♛", "♚"};
+char *unicode_pieces[] = {".", "♟", "♞", "♝", "♜", "♛", "♚", "♙", "♘", "♗", "♖", "♕", "♔" };
 
 // board initialization with in- and out-squares
 int board[128] = {
@@ -65,6 +65,75 @@ int char_pieces[] = {
     ['k'] = k,
 };
 
+// reset board function
+void reset_board() {
+    // loop over board ranks
+    for (int rank = 0; rank < 8; rank++) {
+
+	// loop over board files
+	for (int file = 0; file < 16; file++) {
+
+	    // init square
+	    int square = rank * 16 + file;
+
+	    // if square is on board
+	    if(!(square & 0x88))
+		// reset curretn board to empty
+		board[square] = e;
+       	}
+    }
+};
+
+// parse FEN
+void parse_fen(char *fen) {
+    // reset board
+    reset_board();
+
+    // loop over board ranks
+    for (int rank = 0; rank < 8; rank++) {
+
+	// loop over board files
+	for (int file = 0; file < 16; file++) {
+
+	    // init square
+	    int square = rank * 16 + file;
+
+	    // if square is on board
+	    if(!(square & 0x88))
+	    {
+	       
+		if (isalpha(*fen)) {
+		    // set the piece on board
+		    board[square] = char_pieces[*fen];
+
+		    // increment FEN pointer
+		    fen++;
+		}
+		// match empty squares
+		if (isdigit(*fen)) {
+		    // calculate ofset
+		    int offset = *fen - '0';
+
+		    //decrement file on empty square
+		    if (!(board[square]))
+			file--;
+
+		    // skip empty square
+		    file += offset;
+		    
+		    // increment FEN pointer
+		    fen++;
+		}
+
+		// match end of rank
+		if (*fen == '/')
+		    fen++;
+	    }
+       	}
+    }
+    
+};
+
 // print board
 void print_board() {
     printf("\n\n");
@@ -92,9 +161,9 @@ void print_board() {
 }
 
 int main() {
-    printf("%d", e4);
-    print_board();
 
+    parse_fen(tricky_position);
+    print_board();
 
     return 0;
 }
