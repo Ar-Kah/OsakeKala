@@ -10,6 +10,8 @@ src/gui/chess-env/
 *.a
 *.so
 *.dll
+./*
+
 
 # emacs auto-save and backups
 *#
