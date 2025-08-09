@@ -87,16 +87,16 @@ void reset_board() {
     // loop over board ranks
     for (int rank = 0; rank < 8; rank++) {
 
-	// loop over board files
-	for (int file = 0; file < 16; file++) {
+        // loop over board files
+        for (int file = 0; file < 16; file++) {
 
-	    // init square
-	    int square = rank * 16 + file;
+            // init square
+            int square = rank * 16 + file;
 
-	    // if square is on board
-	    if(!(square & 0x88))
-		// reset curretn board to empty
-		board[square] = e;
+            // if square is on board
+            if(!(square & 0x88))
+                // reset curretn board to empty
+                board[square] = e;
        	}
     }
     // reset stats
@@ -113,43 +113,43 @@ void parse_fen(char *fen) {
     // loop over board ranks
     for (int rank = 0; rank < 8; rank++) {
 
-	// loop over board files
-	for (int file = 0; file < 16; file++) {
+        // loop over board files
+        for (int file = 0; file < 16; file++) {
 
-	    // init square
-	    int square = rank * 16 + file;
+            // init square
+            int square = rank * 16 + file;
 
-	    // if square is on board
-	    if(!(square & 0x88))
-	    {
+            // if square is on board
+            if(!(square & 0x88))
+                {
 	       
-		if (isalpha(*fen)) {
-		    // set the piece on board
-		    board[square] = char_pieces[*fen];
+                    if (isalpha(*fen)) {
+                        // set the piece on board
+                        board[square] = char_pieces[*fen];
 
-		    // increment FEN pointer
-		    fen++;
-		}
-		// match empty squares
-		if (isdigit(*fen)) {
-		    // calculate ofset
-		    int offset = *fen - '0';
+                        // increment FEN pointer
+                        fen++;
+                    }
+                    // match empty squares
+                    if (isdigit(*fen)) {
+                        // calculate ofset
+                        int offset = *fen - '0';
 
-		    //decrement file on empty square
-		    if (!(board[square]))
-			file--;
+                        //decrement file on empty square
+                        if (!(board[square]))
+                            file--;
 
-		    // skip empty square
-		    file += offset;
+                        // skip empty square
+                        file += offset;
 		    
-		    // increment FEN pointer
-		    fen++;
-		}
+                        // increment FEN pointer
+                        fen++;
+                    }
 
-		// match end of rank
-		if (*fen == '/')
-		    fen++;
-	    }
+                    // match end of rank
+                    if (*fen == '/')
+                        fen++;
+                }
        	}
     }
     //increment FEN
@@ -163,43 +163,42 @@ void parse_fen(char *fen) {
 
     // parse castling rights
     while (*fen != ' ')
-    {
+        {
 
-	switch(*fen) {
-        case 'K':
-          castle |= KC;
-          break;
-        case 'Q':
-          castle |= QC;
-          break;
-        case 'k':
-          castle |= kc;
-          break;
-        case 'q':
-          castle |= qc;
-          break;
-        case '-':
-          break;
+            switch(*fen) {
+            case 'K':
+                castle |= KC;
+                break;
+            case 'Q':
+                castle |= QC;
+                break;
+            case 'k':
+                castle |= kc;
+                break;
+            case 'q':
+                castle |= qc;
+                break;
+            case '-':
+                break;
+            }
+
+            // increment fen
+            fen++;
         }
-
-        // increment fen
-	fen++;
-    }
     // goto to enpassant square
     fen++;
 
     // parse enpassant square
     if (*fen != '-'){
-	int file = fen[0] - 'a';
-	int rank = 8 - (fen[1] - '0');
+        int file = fen[0] - 'a';
+        int rank = 8 - (fen[1] - '0');
 
-	// set up enpassant square
-	enpassant = rank * 16 + file;
+        // set up enpassant square
+        enpassant = rank * 16 + file;
     }
     else {
-	enpassant = no_sq;
+        enpassant = no_sq;
     }
-
 };
 
 // print board
@@ -207,20 +206,20 @@ void print_board() {
     printf("\n\n");
 
     for (int rank = 0; rank < 8; rank++) {
+	
+        printf("%d  ", 8 - rank);
 
-	printf("%d  ", 8 - rank);
+        for (int file = 0; file < 16; file++) {
 
-	for (int file = 0; file < 16; file++) {
+            // init square
+            int square = rank * 16 + file;
 
-	    // init square
-	    int square = rank * 16 + file;
+            if(!(square & 0x88))
+                printf("%s ", unicode_pieces[board[square]]);
 
-	    if(!(square & 0x88))
-		printf("%s ", unicode_pieces[board[square]]);
+        }
 
-	}
-
-	printf("\n");
+        printf("\n");
 
     }
 	printf("\n");
@@ -229,7 +228,7 @@ void print_board() {
 
 	printf("---------------\n");
 	printf("Side: %s\n", (side == white) ? "white" : "black");
-        printf("Castling: %c%c%c%c\n", (castle & KC) ? 'K' : '-',
+    printf("Castling: %c%c%c%c\n", (castle & KC) ? 'K' : '-',
 	       (castle & QC) ? 'Q' : '-',
 	       (castle & kc) ? 'k' : '-',
 	       (castle & qc) ? 'q' : '-');
@@ -239,8 +238,7 @@ void print_board() {
 
 int main() {
 
-    parse_fen("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq e3 0 1");
+    parse_fen("8/8/8/3N4/8/8/8/8 w KQkq e3 0 1");
     print_board();
-
     return 0;
 }
